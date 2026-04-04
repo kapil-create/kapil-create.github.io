@@ -460,8 +460,8 @@ footer { padding: 40px 5%; background: #030305; border-top: 1px solid rgba(255,2
     </div>
     <div class="about-grid">
       <div class="about-image-wrapper reveal hover-active">
-        <!-- New Profile Picture integrated here -->
-        <img src="1000087998.jpg" alt="Kapil Jadhav Profile" class="about-image" style="object-position: center top;">
+        <!-- FILENAME UPDATED HERE to match GitHub screenshot -->
+        <img src="1761319969508.jpg" alt="Kapil Jadhav Profile" class="about-image" style="object-position: center top;">
         <div class="about-floating-card glass">
           <span class="stat">3+</span>
           <span class="label">Tech Languages</span>
@@ -783,7 +783,7 @@ let loadingInterval = setInterval(() => {
   }
 }, 40); 
 
-// Custom Cursor
+// Custom Cursor (GPU Optimized using requestAnimationFrame)
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorOutline = document.querySelector('.cursor-outline');
 let outlineX = window.innerWidth / 2, outlineY = window.innerHeight / 2;
@@ -848,7 +848,7 @@ function typeLoop() {
 }
 typeLoop();
 
-// INTERSECTION OBSERVER
+// INTERSECTION OBSERVER (Massive Performance Boost over Scroll Events)
 const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
 const observer = new IntersectionObserver((entries, observer) => {
   entries.forEach(entry => {
@@ -866,7 +866,7 @@ const observer = new IntersectionObserver((entries, observer) => {
 
 document.querySelectorAll('.reveal, .skills-grid').forEach(el => observer.observe(el));
 
-// 3D Tilt Effect
+// 3D Tilt Effect (Disabled on Mobile)
 if (!isMobile) {
   document.querySelectorAll('.tilt-card').forEach(card => {
     card.addEventListener('mousemove', e => {
