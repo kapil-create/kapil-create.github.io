@@ -134,27 +134,25 @@ nav.stuck {
 .nav-toggle.active span:nth-child(2) { opacity: 0; }
 .nav-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); background: var(--accent-light); }
 
-/* ── HERO ── */
+/* ── HERO (0% CPU Gradient Background) ── */
 #hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 140px 5% 100px; position: relative; overflow: hidden; }
 
-/* GPU Optimized Aurora Background */
 .aurora-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; background: #030305; }
 .aurora-blob { 
-  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; mix-blend-mode: screen; 
+  position: absolute; border-radius: 50%;
   animation: floatAurora 25s infinite alternate ease-in-out;
-  will-change: transform; transform: translateZ(0);
+  transform: translateZ(0); /* Hardware acceleration */
 }
-.orb-1 { width: 60vw; height: 60vw; background: rgba(139, 92, 246, 0.3); top: -20%; left: -10%; }
-.orb-2 { width: 50vw; height: 50vw; background: rgba(0, 243, 255, 0.2); bottom: -10%; right: -10%; animation-delay: -7s; }
-.orb-3 { width: 40vw; height: 40vw; background: rgba(109, 40, 217, 0.3); top: 30%; left: 40%; animation-delay: -14s; }
-@keyframes floatAurora { 0% { transform: translate3d(0, 0, 0) scale(1); } 100% { transform: translate3d(8vw, 12vh, 0) scale(1.1); } }
+/* Using radial-gradients instead of filter: blur() eliminates lag completely */
+.orb-1 { width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 60%); top: -30%; left: -20%; }
+.orb-2 { width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(0, 243, 255, 0.1) 0%, transparent 60%); bottom: -20%; right: -20%; animation-delay: -7s; }
+.orb-3 { width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(109, 40, 217, 0.15) 0%, transparent 60%); top: 20%; left: 30%; animation-delay: -14s; }
+@keyframes floatAurora { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(5vw, 5vh, 0); } }
 
 .grid-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 1; background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1.5px, transparent 1.5px); background-size: 35px 35px; mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%); }
 
-#hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.8; }
-
 .floating-element {
-  position: absolute; z-index: 1; opacity: 0.15; color: var(--accent-light); font-size: 2rem; pointer-events: none; filter: blur(1px);
+  position: absolute; z-index: 1; color: var(--accent-light); font-size: 2rem; pointer-events: none; opacity: 0.2;
   animation: floatRandom 15s ease-in-out infinite alternate; will-change: transform;
 }
 .f1 { top: 20%; left: 15%; animation-delay: 0s; font-size: 3rem; }
@@ -348,7 +346,6 @@ footer { padding: 40px 5%; background: #030305; border-top: 1px solid rgba(255,2
   .nav-menu { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(3,3,5,0.98); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.4s; z-index: 99; } 
   .nav-menu.open { opacity: 1; visibility: visible; } .nav-menu a { font-size: 1.5rem; } 
   .nav-toggle { display: flex; } section { padding: 80px 5%; } .hero-name { font-size: 3rem; } .hero-typewriter { font-size: 1.2rem; } footer { flex-direction: column; gap: 20px; text-align: center; } 
-  .aurora-blob { filter: blur(50px); animation: none; }
   .ai-widget-container { bottom: 15px; right: 15px; }
   .ai-chat-window { width: calc(100vw - 30px); }
   .timeline::before { left: 16px; }
@@ -403,7 +400,6 @@ footer { padding: 40px 5%; background: #030305; border-top: 1px solid rgba(255,2
     <div class="aurora-blob orb-3"></div>
   </div>
   <div class="grid-overlay"></div>
-  <canvas id="hero-canvas"></canvas>
 
   <i class="ph ph-brackets-curly floating-element f1"></i>
   <i class="ph ph-code floating-element f2"></i>
@@ -460,7 +456,6 @@ footer { padding: 40px 5%; background: #030305; border-top: 1px solid rgba(255,2
     </div>
     <div class="about-grid">
       <div class="about-image-wrapper reveal hover-active">
-        <!-- FILENAME UPDATED HERE to match GitHub screenshot -->
         <img src="1761319969508.jpg" alt="Kapil Jadhav Profile" class="about-image" style="object-position: center top;">
         <div class="about-floating-card glass">
           <span class="stat">3+</span>
@@ -848,7 +843,7 @@ function typeLoop() {
 }
 typeLoop();
 
-// INTERSECTION OBSERVER (Massive Performance Boost over Scroll Events)
+// INTERSECTION OBSERVER
 const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
 const observer = new IntersectionObserver((entries, observer) => {
   entries.forEach(entry => {
@@ -866,7 +861,7 @@ const observer = new IntersectionObserver((entries, observer) => {
 
 document.querySelectorAll('.reveal, .skills-grid').forEach(el => observer.observe(el));
 
-// 3D Tilt Effect (Disabled on Mobile)
+// 3D Tilt Effect
 if (!isMobile) {
   document.querySelectorAll('.tilt-card').forEach(card => {
     card.addEventListener('mousemove', e => {
@@ -911,18 +906,23 @@ document.getElementById('contactForm').addEventListener('submit', (e) => {
   }, 500);
 });
 
-// Gemini API Integration
+// ── HOW TO ACTIVATE AI ON GITHUB PAGES ──
+// Replace the empty string below with your FREE Gemini API Key from Google AI Studio.
 const apiKey = ""; 
 
 async function callGemini(promptText, systemInstruction) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+  // Using the standard public flash model
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   const payload = {
     contents: [{ parts: [{ text: promptText }] }],
     systemInstruction: { parts: [{ text: systemInstruction }] }
   };
   
-  const delays = [1000, 2000, 4000]; 
-  for (let i = 0; i < delays.length; i++) {
+  if (!apiKey || apiKey === "") {
+     return "⚠️ AI Assistant is offline. Please generate a free Gemini API key from Google AI Studio and paste it into the code where it says 'const apiKey = \"\";'.";
+  }
+
+  for (let i = 0; i < 3; i++) {
     try {
       const response = await fetch(url, { 
         method: 'POST', 
@@ -930,20 +930,14 @@ async function callGemini(promptText, systemInstruction) {
         body: JSON.stringify(payload) 
       });
       
-      if (!response.ok) {
-        console.error("API Error:", response.status);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error("API Error");
       
       const result = await response.json(); 
       return result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't process that.";
       
     } catch (error) {
-      if (i === delays.length - 1) {
-          if(apiKey === "") return "AI Assistant is offline. Please configure your API key in the code to enable chat.";
-          return "Network error. Please try again later.";
-      }
-      await new Promise(resolve => setTimeout(resolve, delays[i]));
+      if (i === 2) return "Network error. Please try again later.";
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
 }
@@ -953,7 +947,7 @@ const chatToggle = document.getElementById('aiChatToggle'); const chatWindow = d
 const chatClose = document.getElementById('aiChatClose'); const chatInput = document.getElementById('aiChatInput');
 const chatSend = document.getElementById('aiChatSend'); const chatMessages = document.getElementById('aiChatMessages');
 const typingIndicator = document.getElementById('aiTypingIndicator');
-const aiSystemPrompt = "You are the AI assistant for Kapil Jadhav, an ambitious Software Developer and BCA student at IMRD Shirpur specializing in C++, HTML, and CSS. You speak confidently about his strong grasp of OOP, modern web architecture, and problem-solving skills. Answer questions enthusiastically but concisely (1-2 sentences). He is actively looking for internships and collaborative tech roles. Be highly professional and polite. If asked something unrelated, gently steer the conversation back to Kapil's impressive technical portfolio.";
+const aiSystemPrompt = "You are the AI assistant for Kapil Jadhav, an ambitious Software Developer and BCA student at IMRD Shirpur specializing in C++, HTML, and CSS. Answer questions enthusiastically but concisely (1-2 sentences). He is actively looking for internships. If asked something unrelated, gently steer the conversation back to Kapil's impressive technical portfolio.";
 
 function addMessage(text, sender) {
   const msgDiv = document.createElement('div'); msgDiv.className = `ai-message ${sender}`; msgDiv.textContent = text.replace(/\*\*/g, '');
@@ -978,75 +972,11 @@ enhanceBtn.addEventListener('click', async () => {
   if (!currentText) { messageBox.value = "Please type a short message first before enhancing it!"; return; }
   enhanceBtn.innerHTML = '<i class="ph ph-spinner" style="animation: spinLoader 1s linear infinite;"></i> Enhancing...'; enhanceBtn.style.pointerEvents = 'none';
   const enhancePrompt = `Take this draft message from a recruiter/visitor to Kapil Jadhav and make it more polished, professional, and clear. Keep it under 4 sentences. ONLY return the revised message text, no conversational filler. Draft: "${currentText}"`;
+  
   const improvedText = await callGemini(enhancePrompt, "You are a professional writing assistant.");
   messageBox.value = improvedText; messageBox.focus();
   enhanceBtn.innerHTML = '✨ Enhance Message'; enhanceBtn.style.pointerEvents = 'auto';
 });
-
-// Interactive Canvas
-const heroCanvas = document.getElementById('hero-canvas');
-if (heroCanvas) {
-  const ctx = heroCanvas.getContext('2d', { alpha: false }); 
-  let canvasWidth, canvasHeight; let particlesArray = [];
-  const colors = ['#8b5cf6', '#00f3ff', '#d8b4fe'];
-  
-  function initCanvas() {
-    canvasWidth = window.innerWidth; canvasHeight = window.innerHeight;
-    heroCanvas.width = canvasWidth; heroCanvas.height = canvasHeight; particlesArray = [];
-    
-    const density = isMobile ? 18000 : 9000;
-    const maxParticles = isMobile ? 30 : 100;
-    const count = Math.min((canvasWidth * canvasHeight) / density, maxParticles);
-    
-    for(let i = 0; i < count; i++) particlesArray.push(new Particle());
-  }
-
-  class Particle {
-    constructor() {
-      this.x = Math.random() * canvasWidth; this.y = Math.random() * canvasHeight;
-      this.size = Math.random() * 2 + 0.5; this.speedX = (Math.random() * 1.5) - 0.75; this.speedY = (Math.random() * 1.5) - 0.75;
-      this.color = colors[Math.floor(Math.random() * colors.length)]; this.glow = Math.random() * 10 + 5;
-    }
-    update() {
-      this.x += this.speedX; this.y += this.speedY;
-      if(this.x > canvasWidth) this.x = 0; else if(this.x < 0) this.x = canvasWidth;
-      if(this.y > canvasHeight) this.y = 0; else if(this.y < 0) this.y = canvasHeight;
-
-      if (!isMobile && gMouse.x != null && gMouse.y != null && window.scrollY < window.innerHeight) {
-        const dx = gMouse.x - this.x; const dy = (gMouse.y + window.scrollY) - this.y; const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 250) { 
-          const force = (250 - distance) / 250; 
-          this.x += (dx / distance) * force * 3; 
-          this.y += (dy / distance) * force * 3; 
-        }
-      }
-    }
-    draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = this.color; ctx.shadowBlur = this.glow; ctx.shadowColor = this.color; ctx.fill(); }
-  }
-
-  function animateCanvas() {
-    ctx.fillStyle = '#030305'; 
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    
-    for(let i = 0; i < particlesArray.length; i++) {
-      particlesArray[i].update(); particlesArray[i].draw();
-      
-      if (!isMobile) {
-        for(let j = i; j < particlesArray.length; j++) {
-          const dx = particlesArray[i].x - particlesArray[j].x; const dy = particlesArray[i].y - particlesArray[j].y; const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 110) { ctx.beginPath(); ctx.strokeStyle = particlesArray[i].color; ctx.globalAlpha = 1 - (distance/110); ctx.lineWidth = 0.7; ctx.moveTo(particlesArray[i].x, particlesArray[i].y); ctx.lineTo(particlesArray[j].x, particlesArray[j].y); ctx.stroke(); ctx.globalAlpha = 1.0; }
-        }
-        if (gMouse.x != null && gMouse.y != null && window.scrollY < window.innerHeight) {
-          const dxMouse = particlesArray[i].x - gMouse.x; const dyMouse = particlesArray[i].y - (gMouse.y + window.scrollY); const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-          if (distanceMouse < 200) { ctx.beginPath(); ctx.strokeStyle = '#00f3ff'; ctx.globalAlpha = 0.9 - (distanceMouse/200); ctx.lineWidth = 1.5; ctx.moveTo(particlesArray[i].x, particlesArray[i].y); ctx.lineTo(gMouse.x, gMouse.y + window.scrollY); ctx.stroke(); ctx.globalAlpha = 1.0; }
-        }
-      }
-    }
-    requestAnimationFrame(animateCanvas);
-  }
-  window.addEventListener('resize', () => { clearTimeout(window.resizeTimer); window.resizeTimer = setTimeout(initCanvas, 200); });
-  initCanvas(); animateCanvas();
-}
 </script>
 </body>
 </html>
